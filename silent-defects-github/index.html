@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Silent Procedural Defects</title>
+<meta name="description" content="Project page: silent procedural defects in LLM financial agents.">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+/* Layout follows the Nerfies / Agent Laboratory template: hero, centred two-thirds column, h4 sections, figures, BibTeX, footer. */
+:root{--bg:#ffffff;--paper:#f6f6f6;--pink:#f7a8c4;--deep:#d96a98;--ink:#2b2740;--navy:#2b2d4a;--mute:#7c6f85;--line:#ee9ab9;--green:#4fb286;--hatch:#f3c6d6}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans',sans-serif;font-size:16px;line-height:1.55}
+.container{max-width:1152px;margin:0 auto;padding:0 24px}
+.col23{max-width:768px;margin:0 auto}
+.center{text-align:center}
+
+/* hero */
+.hero{padding:56px 0 8px;position:relative;overflow:hidden}
+.title{font-family:'Press Start 2P',monospace;font-size:clamp(1.5rem,4.4vw,2.7rem);line-height:1.25;margin:0 0 .5rem;color:var(--navy);text-shadow:3px 3px 0 #fff}
+.subtitle{font-family:'Silkscreen',monospace;font-weight:400;font-size:clamp(1rem,2.6vw,1.65rem);margin:0 0 22px;color:var(--deep)}
+.authors{font-size:1.1rem;margin-bottom:6px}
+.affil{color:var(--mute);font-size:.95rem;margin-bottom:22px}
+.links{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;background:#111;color:#fff;text-decoration:none;font-family:'Silkscreen',monospace;font-size:14px;padding:9px 20px;border-radius:999px;box-shadow:3px 3px 0 var(--deep);transition:.15s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--deep)}
+.btn.off{opacity:.55;pointer-events:none}
+.heroart{margin:30px auto 0;max-width:900px}
+.heroart svg{width:100%;height:auto;display:block}
+
+/* sections */
+.section{padding:44px 0}
+h4.t{font-family:'Silkscreen',monospace;font-weight:700;font-size:1.35rem;margin:0 0 1rem;color:var(--navy);letter-spacing:.01em}
+h4.t::before{content:"♥ ";color:var(--deep)}
+p{margin:0 0 34px;text-align:justify}
+kbd{background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-family:'VT323',monospace;font-size:1.15em;color:var(--navy)}
+.fig{margin:0 0 44px;text-align:center}
+.fig .frame{background:#fff;border:3px solid var(--navy);border-radius:10px;box-shadow:6px 6px 0 var(--pink);padding:10px}
+.fig svg{width:100%;height:auto;display:block}
+.fig figcaption{font-size:.85rem;color:var(--mute);margin-top:12px;text-align:center}
+.pend{display:inline-block;font-family:'VT323',monospace;font-size:1.1rem;background:var(--navy);color:#fff;padding:0 8px;border-radius:4px}
+
+/* svg text */
+svg text{font-family:'Noto Sans',sans-serif;fill:var(--navy)}
+svg .mono{font-family:'VT323',monospace;font-size:17px}
+svg .pix{font-family:'Silkscreen',monospace;font-size:14px}
+svg .lab{font-size:13px}
+svg .mut{fill:var(--mute)}
+.flow{stroke-dasharray:6 6;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-12}}
+.pulse{animation:pulse 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{50%{transform:scale(1.18)}}
+@media (prefers-reduced-motion:reduce){.flow,.pulse{animation:none}}
+
+/* tables (styled like the template's score tables, thick black rules) */
+.tbl{width:100%;border-collapse:collapse;background:#fff;font-size:.9rem;margin:6px 0 4px}
+.tbl th,.tbl td{border:2.5px solid var(--navy);padding:9px 6px;text-align:center}
+.tbl th{font-weight:600;background:var(--paper)}
+.tbl td:first-child{font-weight:600;background:var(--paper)}
+.tbl td.na{color:var(--mute);font-family:'VT323',monospace;font-size:1.25rem}
+.tbl.small{font-size:.76rem}.tbl.small th,.tbl.small td{padding:6px 4px;border-width:2px}.tbl td.sub{background:#fff0f5;font-style:italic;text-align:left;font-weight:400}
+.tbl-cap{font-size:1rem;margin:22px 0 6px;text-align:center}
+.tbl-cap a{color:var(--deep);text-decoration:underline}
+.tbl-cap.g a{color:var(--green)}
+
+/* bibtex */
+pre{background:#fff;border:3px solid var(--navy);border-radius:10px;padding:18px;overflow:auto;font-family:ui-monospace,Menlo,monospace;font-size:.85rem;box-shadow:6px 6px 0 var(--pink)}
+h2.bib{font-family:'Silkscreen',monospace;font-size:1.6rem;margin:0 0 14px;color:var(--navy)}
+footer{padding:36px 0 60px;text-align:center;color:var(--mute);font-size:.9rem}
+footer a{color:var(--navy)}
+.eq{background:#fff;border:3px solid var(--navy);border-radius:10px;box-shadow:6px 6px 0 var(--pink);padding:16px 20px;margin:0 0 34px;font-family:'VT323',monospace;font-size:1.35rem;line-height:1.7;text-align:center;overflow:auto}
+.eq small{display:block;font-family:'Noto Sans',sans-serif;font-size:.8rem;color:var(--mute);text-align:center}
+.draw{stroke-dasharray:600;stroke-dashoffset:600;animation:drawl 2.4s ease forwards}
+@keyframes drawl{to{stroke-dashoffset:0}}
+.spark{position:absolute;pointer-events:none}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="container">
+    <div class="col23 center">
+      <h1 class="title">Silent Procedural Defects in Financial Tool Use:</h1>
+      <h2 class="subtitle">An Evaluation Framework, Offline Validation, and a Live Stress Test</h2>
+      <div class="authors">Jasleen Sandhu</div>
+      <div class="links">
+        <a class="btn" href="https://github.com/jasleen-sandhuu/silent-defects-llm-finance-agents/blob/main/silent-defects-github/paper/main.pdf" target="_blank" rel="noopener"><span>▤</span> Paper</a>
+        <a class="btn" href="https://github.com/jasleen-sandhuu/silent-defects-llm-finance-agents/tree/main" target="_blank" rel="noopener"><span>◈</span> Code</a>
+        <a class="btn off" aria-disabled="true"><span>✉</span> Citation</a>
+      </div>
+    </div>
+    <div class="heroart"><svg viewBox="0 0 1000 520" role="img" aria-label="The silent defect lab: agents at work on a reconciliation case">
+  <!-- left: human requests -->
+  <circle cx="40" cy="150" r="24" fill="#2b2d4a"/><circle cx="40" cy="143" r="8" fill="#fff"/><path d="M26,166 a14,12 0 0 1 28,0" fill="#fff"/>
+  <rect x="82" y="92" width="170" height="118" rx="8" fill="#f1f1f1"/>
+  <text x="94" y="120" class="mono">Operating margin of</text><text x="94" y="144" class="mono">company 7 in 2021,</text><text x="94" y="168" class="mono">as originally</text><text x="94" y="192" class="mono">reported?</text>
+  <circle cx="40" cy="340" r="24" fill="#2b2d4a"/><circle cx="40" cy="333" r="8" fill="#fff"/><path d="M26,356 a14,12 0 0 1 28,0" fill="#fff"/>
+  <rect x="82" y="270" width="170" height="140" rx="8" fill="#f1f1f1"/>
+  <text x="94" y="298" class="mono">* Cite every item</text><text x="94" y="322" class="mono">you retrieved.</text><text x="94" y="346" class="mono">* Use the as-</text><text x="94" y="370" class="mono">reported basis...</text>
+  <path d="M252,150 H268" stroke="#2b2d4a" stroke-width="3"/><circle cx="268" cy="150" r="4" fill="#2b2d4a"/>
+  <path d="M252,340 H268" stroke="#2b2d4a" stroke-width="3"/><circle cx="268" cy="340" r="4" fill="#2b2d4a"/>
+
+  <!-- centre: pixel lab room -->
+  <g transform="translate(270,10)">
+    <rect width="460" height="500" rx="8" fill="#d9d6de" stroke="#b9b5c2" stroke-width="2"/>
+    <rect x="16" y="6" width="428" height="488" fill="#8a5a4a"/>
+    <rect x="22" y="12" width="416" height="112" fill="#f3d5df"/>
+    <g fill="#fff" opacity=".9"><rect x="30" y="20" width="60" height="48"/><rect x="100" y="20" width="60" height="48"/><rect x="300" y="20" width="60" height="48"/><rect x="370" y="20" width="60" height="48"/></g>
+    <g stroke="#d96a98" stroke-width="2"><path d="M60,20V68M30,44H90M130,20V68M100,44H160M330,20V68M300,44H360M400,20V68M370,44H430"/></g>
+    <rect x="186" y="14" width="88" height="106" fill="#9a6a52" stroke="#6e4a3a" stroke-width="3"/><circle cx="198" cy="70" r="3" fill="#f0c98a"/>
+    <rect x="22" y="124" width="416" height="364" fill="#ecd0a8"/>
+    <g stroke="#d9b98c" stroke-width="2"><path d="M22,150H438M22,176H438M22,202H438M22,228H438M22,254H438M22,280H438M22,306H438M22,332H438M22,358H438M22,384H438M22,410H438M22,436H438M22,462H438"/></g>
+    <rect x="96" y="226" width="268" height="132" fill="#f7a8c4" stroke="#d96a98" stroke-width="4"/><rect x="112" y="240" width="236" height="104" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="6 6"/>
+    <!-- desks -->
+    <g><rect x="24" y="190" width="56" height="86" fill="#7a4e3c"/><rect x="30" y="198" width="42" height="34" fill="#2b2d4a"/><path d="M34,206h30M34,214h22M34,222h30" stroke="#f7a8c4" stroke-width="2"/></g>
+    <g><rect x="380" y="190" width="56" height="86" fill="#7a4e3c"/><rect x="388" y="198" width="42" height="34" fill="#2b2d4a"/><path d="M394,206h30M394,214h22M394,222h30" stroke="#4fb286" stroke-width="2"/></g>
+    <g><rect x="24" y="352" width="56" height="86" fill="#7a4e3c"/><rect x="30" y="360" width="42" height="34" fill="#fff"/><text x="51" y="383" text-anchor="middle" class="pix" style="font-size:10px">10-K</text></g>
+    <g><rect x="380" y="352" width="56" height="86" fill="#7a4e3c"/><rect x="388" y="360" width="42" height="34" fill="#fff"/><text x="409" y="383" text-anchor="middle" class="pix" style="font-size:10px">CHK</text></g>
+    <text x="230" y="486" text-anchor="middle" class="pix" style="font-size:25px">SILENT DEFECT LAB</text>
+    <!-- house items -->
+    <g><rect x="34" y="132" width="6" height="44" fill="#8a5a4a"/><rect x="24" y="168" width="26" height="8" fill="#8a5a4a"/><path d="M22,132 L52,132 L46,110 L28,110 Z" fill="#f3e2b8" stroke="#c9a86a" stroke-width="2"/></g>
+    <circle cx="173" cy="40" r="11" fill="#fff" stroke="#2b2d4a" stroke-width="2.5"/><path d="M173,40V33M173,40L178,43" stroke="#2b2d4a" stroke-width="2"/>
+    <g><rect x="332" y="128" width="96" height="42" rx="6" fill="#d96a98"/><rect x="332" y="118" width="96" height="16" rx="6" fill="#c25583"/><rect x="326" y="128" width="12" height="42" rx="5" fill="#c25583"/><rect x="422" y="128" width="12" height="42" rx="5" fill="#c25583"/></g>
+    <g><rect x="196" y="262" width="64" height="8" fill="#a8745a"/><rect x="202" y="270" width="6" height="16" fill="#a8745a"/><rect x="248" y="270" width="6" height="16" fill="#a8745a"/><rect x="214" y="252" width="12" height="10" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><path d="M226,255h4v4h-4" fill="none" stroke="#2b2d4a" stroke-width="2"/><rect x="236" y="256" width="14" height="6" fill="#f7a8c4"/></g>
+    <g fill="#9aa0b8" stroke="#2b2d4a" stroke-width="2"><rect x="150" y="318" width="26" height="14" rx="5"/><rect x="170" y="310" width="14" height="14" rx="4"/><path d="M172,310 l3,-6 l3,6 M180,310 l3,-6 l3,6" fill="#9aa0b8"/></g>
+    <g><rect x="28" y="436" width="30" height="34" fill="#a8745a"/><circle cx="43" cy="424" r="14" fill="#4fb286"/><circle cx="30" cy="430" r="10" fill="#6fbf73"/><circle cx="56" cy="430" r="10" fill="#6fbf73"/></g>
+    <g><rect x="402" y="436" width="30" height="34" fill="#a8745a"/><circle cx="417" cy="422" r="13" fill="#6fbf73"/><circle cx="406" cy="430" r="9" fill="#4fb286"/><circle cx="428" cy="430" r="9" fill="#4fb286"/></g>
+    <g stroke="#6e4a3a" stroke-width="3"><rect x="150" y="22" width="0" height="0" fill="none"/></g>
+    <g><rect x="92" y="130" width="70" height="46" fill="#9a6a52" stroke="#6e4a3a" stroke-width="3"/><path d="M96,134h62M96,150h62M96,166h62" stroke="#6e4a3a" stroke-width="2"/><rect x="100" y="138" width="8" height="12" fill="#f7a8c4"/><rect x="112" y="136" width="8" height="14" fill="#4fb286"/><rect x="124" y="138" width="8" height="12" fill="#f0c98a"/><rect x="136" y="137" width="8" height="13" fill="#9aa0b8"/><rect x="104" y="154" width="8" height="12" fill="#d96a98"/><rect x="116" y="155" width="8" height="11" fill="#fff"/></g>
+    <!-- agents -->
+    <g class="chibi" data-k="agent" transform="translate(198,50) scale(4)"/>
+    <g class="chibi" data-k="gen" transform="translate(88,172) scale(4)"/>
+    <g class="chibi" data-k="gate" transform="translate(308,172) scale(4)"/>
+    <g class="chibi" data-k="checker" transform="translate(88,330) scale(4)"/>
+    <g class="chibi" data-k="oracle" transform="translate(308,330) scale(4)"/>
+    <g class="mono" text-anchor="middle" style="font-size:15px"><text x="230" y="166" class="mono">Agent</text><text x="120" y="284" class="mono">Case generator</text><text x="340" y="284" class="mono">Finance tools</text><text x="120" y="442" class="mono">Process checker</text><text x="340" y="442" class="mono">Outcome oracle</text></g>
+  </g>
+  <path d="M730,120 H752" stroke="#2b2d4a" stroke-width="3"/><circle cx="752" cy="120" r="4" fill="#2b2d4a"/>
+  <path d="M730,370 H752" stroke="#2b2d4a" stroke-width="3"/><circle cx="752" cy="370" r="4" fill="#2b2d4a"/>
+
+  <!-- right: outputs -->
+  <rect x="760" y="30" width="230" height="200" rx="8" fill="#f1f1f1"/>
+  <text x="776" y="58" class="pix" style="font-size:13px">example trace</text>
+  <text x="776" y="88" class="mono" style="fill:#4fb286">✓ get_financials</text>
+  <text x="776" y="112" class="mono" style="fill:#d96a98">✗ basis: restated</text>
+  <text x="776" y="136" class="mono">✓ submit_answer</text>
+  <path d="M776,150H974" stroke="#d6d6d6" stroke-width="2"/>
+  <text x="776" y="176" class="mono">outcome ✓  process ✗</text>
+  <rect x="776" y="188" width="150" height="28" rx="14" fill="#d96a98"/><text x="851" y="208" text-anchor="middle" class="pix" style="fill:#fff;font-size:12px">SILENT DEFECT</text>
+  <rect x="760" y="270" width="230" height="220" rx="8" fill="#f1f1f1"/>
+  <text x="780" y="306" class="mono" style="font-size:22px">▸ out_suite/</text>
+  <text x="800" y="344" class="mono" style="font-size:22px">cases.json</text>
+  <text x="800" y="380" class="mono" style="font-size:22px">runs.jsonl</text>
+  <text x="800" y="416" class="mono" style="font-size:22px">analysis/</text>
+  <text x="800" y="452" class="mono" style="font-size:22px">readme.md</text>
+  <path d="M784,314V448M784,344H796M784,380H796M784,416H796M784,452H796" stroke="#2b2d4a" stroke-width="2" fill="none"/>
+</svg></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container"><div class="col23">
+
+    <h4 class="t">Abstract</h4>
+    <p>A financial answer can be numerically correct and still break an evidence requirement. I call this a <strong>silent procedural defect</strong> and build a synthetic benchmark that scores answer correctness separately from retrieval and citation compliance. The questions ask for figures as originally reported, but the data tool returns restated figures by default. The primary measure is the silent-defect rate among outcome-correct runs, reported beside overall correctness. A deterministic checker is validated on planted defects and harmless reorderings, and three scripted policies show that the pipeline recovers behaviour I built in; they say nothing about language models. I then ran one model, <kbd>gpt-4o-mini</kbd>, on 100 cases under six conditions, in two repetitions of 1,200 runs. No silent defect occurred in any single-setback condition, and the combined condition produced one in each repetition. A second study lengthened the task to 2, 8 and 16 required retrievals (1,080 runs): with failing tools, 14 of 65 correct runs (21.5%) were silent at 16 retrievals, each citing a figure whose retrieval had failed. Outcome-only evaluation would have scored every one of these runs as a success. These results come from one small model on a synthetic task and do not show how often silent defects occur in financial agents generally.</p>
+
+    <h4 class="t">What does this study measure?</h4>
+    <p>A financial question can specify more than a number: also the reporting basis and the evidence behind it. Ask for operating margin <em>as originally reported</em>, and a tool that returns <kbd>restated</kbd> figures by default can still give the right number when nothing was restated. An answer-only check accepts it. By &ldquo;silent&rdquo; I mean undetected by outcome-only evaluation; the breach is still visible in a complete tool trace. A defect here is a broken rule, not proven financial loss.</p>
+
+    <h4 class="t">How does it work?</h4>
+    <p>The study has three parts: (1) an <kbd>offline validation</kbd> where three scripted policies check that the pipeline recovers behaviours we constructed; (2) a <kbd>live evaluation</kbd> of one served model, gpt-4o-mini, on 100 cases under six conditions; and (3) a <kbd>task-length ladder</kbd> of 2, 8 and 16 required retrievals. Only parts 2 and 3 say anything about a language model.</p>
+
+    <!-- Figure 1: workflow with agents -->
+    <figure class="fig"><div class="frame">
+      <svg viewBox="0 0 1000 540" role="img" aria-label="Study workflow with agents">
+        <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#2b2d4a"/></marker></defs>
+        <text x="8" y="38" class="pix">Phases</text><text x="8" y="106" class="pix">Subtasks</text>
+        <rect x="0" y="140" width="1000" height="130" fill="#f3f3f3"/>
+        <rect x="0" y="390" width="1000" height="96" fill="#f3f3f3"/>
+        <text x="8" y="200" class="mono">Designer</text><text x="8" y="334" class="mono">Human</text><text x="8" y="440" class="mono">Tool use</text>
+
+        <rect x="120" y="8" width="200" height="46" rx="9" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><text x="220" y="37" text-anchor="middle" class="lab">Case generation</text>
+        <rect x="335" y="8" width="340" height="46" rx="9" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><text x="505" y="37" text-anchor="middle" class="lab">Agent runs</text>
+        <rect x="690" y="8" width="305" height="46" rx="9" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><text x="842" y="37" text-anchor="middle" class="lab">Process checking &amp; analysis</text>
+
+        <rect x="135" y="76" width="170" height="46" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="1.5"/><text x="220" y="104" text-anchor="middle" class="lab">Synthetic filings</text>
+        <rect x="350" y="76" width="150" height="46" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="1.5"/><text x="425" y="104" text-anchor="middle" class="lab">3 scripted policies</text>
+        <rect x="515" y="76" width="150" height="46" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="1.5"/><text x="590" y="104" text-anchor="middle" class="lab">gpt-4o-mini</text>
+        <rect x="700" y="76" width="140" height="46" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="1.5"/><text x="770" y="104" text-anchor="middle" class="lab">Checkers</text>
+        <rect x="850" y="76" width="140" height="46" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="1.5"/><text x="920" y="104" text-anchor="middle" class="lab">σ estimate</text>
+
+        <!-- designer -->
+        <g class="chibi" data-k="gen" transform="translate(190,150) scale(4)"/>
+        <text x="220" y="262" text-anchor="middle" class="mono">Case generator</text>
+
+        <!-- human flow -->
+        <circle cx="62" cy="372" r="0"/>
+        <g transform="translate(40,300)"><circle cx="22" cy="22" r="22" fill="#2b2d4a"/><circle cx="22" cy="16" r="7" fill="#fff"/><path d="M9,36 a13,11 0 0 1 26,0" fill="#fff"/></g>
+        <path d="M92,322 H128" stroke="#2b2d4a" stroke-width="2" marker-end="url(#ar)"/>
+        <text x="136" y="328" class="mono">task</text>
+        <path d="M176,322 H222" stroke="#2b2d4a" stroke-width="2" marker-end="url(#ar)"/>
+        <text x="230" y="328" class="mono">case</text>
+        <path d="M270,322 H330" stroke="#2b2d4a" stroke-width="2" marker-end="url(#ar)"/>
+        <path d="M220,270 V300" stroke="#2b2d4a" stroke-width="2"/>
+
+        <!-- agent loop box -->
+        <rect x="335" y="140" width="340" height="346" rx="10" fill="#fff" stroke="#b9b5c2" stroke-width="2"/>
+        <g class="chibi" data-k="agent" transform="translate(473,148) scale(4)"/>
+        <text x="505" y="262" text-anchor="middle" class="mono">LLM agent</text>
+        <text x="352" y="300" class="mono">prev state</text>
+        <g transform="translate(368,310)"><rect width="30" height="38" rx="3" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><path d="M6,12h18M6,20h18M6,28h12" stroke="#d96a98" stroke-width="2"/></g>
+        <path d="M383,306 V282 H455" fill="none" stroke="#2b2d4a" stroke-width="2"/>
+        <text x="560" y="300" class="mono">traces</text>
+        <g transform="translate(560,310)"><rect width="30" height="38" rx="3" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><rect x="38" width="30" height="38" rx="3" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><rect x="76" width="30" height="38" rx="3" fill="#fff" stroke="#2b2d4a" stroke-width="2"/></g>
+        <path d="M555,282 H590 V306" fill="none" stroke="#2b2d4a" stroke-width="2"/>
+        <rect x="352" y="384" width="120" height="32" rx="9" fill="#2b2d4a"/><text x="412" y="406" text-anchor="middle" class="lab" style="fill:#fff">TOOL CALL</text>
+        <rect x="490" y="384" width="110" height="32" rx="9" fill="#d96a98"/><text x="545" y="406" text-anchor="middle" class="lab" style="fill:#fff">SUBMIT</text>
+        <path d="M383,350 V384 M590,350 V384" stroke="#2b2d4a" stroke-width="2"/>
+        <path d="M472,400 H490" stroke="#2b2d4a" stroke-width="2" marker-end="url(#ar)" class="flow"/>
+        <path d="M545,416 V446 H640" fill="none" stroke="#2b2d4a" stroke-width="2" marker-end="url(#ar)" class="flow"/>
+        <text x="352" y="450" class="mono">get_financials · get_restatement_notes</text>
+        <text x="640" y="468" text-anchor="end" class="mono">submit_answer</text>
+        <text x="505" y="510" text-anchor="middle" class="mono">one fixed configuration, K repeats</text>
+        <path d="M270,322 H335" stroke="none"/>
+
+        <!-- checking -->
+        <g class="chibi" data-k="checker" transform="translate(700,150) scale(4)"/>
+        <text x="732" y="262" text-anchor="middle" class="mono">Checker</text>
+        <g class="chibi" data-k="oracle" transform="translate(790,150) scale(4)"/>
+        <text x="822" y="262" text-anchor="middle" class="mono">Oracle</text>
+        <g class="chibi" data-k="stat" transform="translate(890,150) scale(4)"/>
+        <text x="922" y="262" text-anchor="middle" class="mono">Analyst</text>
+        <path d="M675,322 H700" stroke="#2b2d4a" stroke-width="2" marker-end="url(#ar)"/>
+        <rect x="705" y="296" width="120" height="52" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><text x="765" y="318" text-anchor="middle" class="lab">V: process</text><text x="765" y="336" text-anchor="middle" class="lab">defect?</text>
+        <rect x="835" y="296" width="150" height="52" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><text x="910" y="318" text-anchor="middle" class="lab">A: outcome</text><text x="910" y="336" text-anchor="middle" class="lab">correct?</text>
+        <path d="M765,348 V372 H910 V348" fill="none" stroke="#2b2d4a" stroke-width="2"/>
+        <rect x="770" y="395" width="215" height="38" rx="9" fill="#2b2d4a"/><text x="877" y="420" text-anchor="middle" class="lab" style="fill:#fff">σ = P(V=1 | A=1)</text>
+        <path d="M877,372 V395" stroke="#2b2d4a" stroke-width="2" marker-end="url(#ar)"/>
+        <text x="700" y="450" class="mono">missing · not required · never retrieved</text>
+        <text x="700" y="474" class="mono">cluster bootstrap over cases</text>
+        <text x="130" y="440" class="mono">simulated finance tools</text>
+        <path d="M130,452 H320" stroke="#d6d6d6" stroke-width="2" stroke-dasharray="5 4"/>
+      </svg></div>
+      <figcaption>Study workflow (schematic).</figcaption>
+    </figure>
+
+    <h4 class="t">Cases and the rubric</h4>
+    <p>The environment is synthetic, so records, required evidence and reference answers are known exactly. The agent has four tools: <kbd>get_company_profile</kbd>, <kbd>get_financials</kbd>, <kbd>get_restatement_notes</kbd> and <kbd>submit_answer</kbd>. The financial-data tool returns the restated basis by default, as its description states, while every question asks for figures as originally reported, so an agent only has to accept the default to fall into the trap. Questions cover operating margin, net margin and revenue growth.</p>
+    <p>Cases fall into two strata. In <strong>stratum A</strong> no year the question needs was restated, so a wrong-basis retrieval changes nothing numerically and any resulting defect is silent by construction. <strong>Stratum B</strong> needs a restated year with a gap of at least 0.5 percentage points between the two bases, so a wrong basis gives a wrong answer. The strata are balanced by design (offline: 40 cases, 20 per stratum; live: 100 cases, 50 per stratum), so a pooled rate depends on the chosen mix and not on how often restatements occur in practice.</p>
+    <p>For reference answer <em>y</em> and submitted value <em>ŷ</em>, correctness is an indicator with a tolerance in percentage points, and it contains no process control. Let <em>R</em> be the required evidence set, <em>G</em> the items successfully retrieved and <em>E</em> the items cited. The checker applies three rules, and a run is defective if any one of them fires.</p>
+    <div class="eq">A = 1{ |ŷ − y| ≤ 0.1 }<br>M = 1{ R∖G ≠ ∅ }  <small>a required item was never retrieved</small>W = 1{ E∖R ≠ ∅ }  <small>a cited item is not required</small>U = 1{ E∖G ≠ ∅ }  <small>a cited item was never retrieved</small>V = M or W or U, &nbsp; S = A·V<small>S is the silent-defect indicator</small></div>
+    <p>The rubric is deliberately narrow. It covers retrieval and citation of evidence because those can be checked deterministically, and it does not cover authorisation, escalation or whether the agent reasoned from the wrong evidence.</p>
+
+    <p><strong>Two axes, one estimand.</strong> Every run is placed on two independent axes. The primary quantity is the share of outcome-correct runs that are defective, reported next to the overall correctness rate and the unconditional silent-defect rate so the denominator is always visible.</p>
+
+    <!-- Figure 3: 2x2 -->
+    <figure class="fig"><div class="frame" style="max-width:640px;margin:0 auto">
+      <svg viewBox="0 0 640 400" role="img" aria-label="Outcome by process grid">
+        <text x="330" y="26" text-anchor="middle" class="pix">process clean</text><text x="500" y="26" text-anchor="middle" class="pix">process defective</text>
+        <text transform="translate(26,130) rotate(-90)" text-anchor="middle" class="pix">outcome correct</text>
+        <text transform="translate(26,300) rotate(-90)" text-anchor="middle" class="pix">outcome wrong</text>
+        <rect x="245" y="40" width="170" height="150" rx="8" fill="#eefaf3" stroke="#4fb286" stroke-width="2.5"/><text x="330" y="120" text-anchor="middle" class="mono">compliant</text>
+        <rect x="415" y="40" width="170" height="150" rx="8" fill="#ffe3ec" stroke="#d96a98" stroke-width="2.5" stroke-dasharray="6 4" class="flow"/><text x="500" y="108" text-anchor="middle" class="pix" style="fill:#d96a98">SILENT</text><text x="500" y="130" text-anchor="middle" class="pix" style="fill:#d96a98">DEFECT</text>
+        <rect x="245" y="200" width="170" height="150" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><text x="330" y="280" text-anchor="middle" class="mono">visible error</text>
+        <rect x="415" y="200" width="170" height="150" rx="8" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><text x="500" y="280" text-anchor="middle" class="mono">visible error</text>
+        <text x="320" y="384" text-anchor="middle" class="mono" style="fill:#d96a98;font-size:21px">σ = silent defect ÷ (compliant + silent defect)</text>
+      </svg></div>
+      <figcaption>Outcome correctness and procedural compliance are kept separate. Schematic.</figcaption>
+    </figure>
+
+    <h4 class="t">The estimand</h4>
+    <p>Let <kbd>A</kbd> be outcome correctness and <kbd>V</kbd> a material procedural defect. The primary quantity is the defect rate <em>conditional</em> on a correct outcome, estimated as a pooled ratio over cases <em>i</em> and repeated runs <em>j</em>. Because it is a ratio, correctness sits in the denominator, so it is always reported with the unconditional rate.</p>
+    <div class="eq">σ = P(V=1 | A=1) = E[A·V] / E[A]<br>σ̂ = Σᵢⱼ Aᵢⱼ Vᵢⱼ / Σᵢⱼ Aᵢⱼ<br>u = P(A=1, V=1) = σ · a<small>a = P(A=1) is correctness; u is the unconditional silent-defect rate</small></div>
+
+    <figure class="fig"><div class="frame">
+      <svg viewBox="0 0 900 380" role="img" aria-label="Unconditional silent-defect rate against correctness for fixed sigma">
+        <defs><pattern id="hatch2" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#fff"/><path d="M0,0V9" stroke="#f3c6d6" stroke-width="3"/></pattern></defs>
+        <text x="260" y="26" text-anchor="middle" class="pix">u = σ · a</text>
+        <path d="M90,330 L500,50 L500,330 Z" fill="none"/>
+        <path d="M90,330 L90,50 L500,50 Z" fill="url(#hatch2)" opacity=".9"/>
+        <text x="150" y="215" class="mono mut" transform="rotate(-34 150 215)">impossible: u &gt; a</text>
+        <g stroke="#e8d6de" stroke-width="1.5"><path d="M90,260H500M90,190H500M90,120H500M192,50V330M295,50V330M397,50V330"/></g>
+        <path d="M90,50V330H500" fill="none" stroke="#2b2d4a" stroke-width="2.5"/>
+        <path d="M90,330 L500,50" stroke="#2b2d4a" stroke-width="2" stroke-dasharray="6 5"/>
+        <path class="draw" d="M90,330 L500,215" fill="none" stroke="#d96a98" stroke-width="3.5"/><text x="508" y="219" class="mono" style="fill:#d96a98">σ = 0.50</text>
+        <path class="draw" d="M90,330 L500,260" fill="none" stroke="#f08fb4" stroke-width="3.5" style="animation-delay:.4s"/><text x="508" y="264" class="mono" style="fill:#d96a98">σ = 0.25</text>
+        <path class="draw" d="M90,330 L500,302" fill="none" stroke="#f7b8cf" stroke-width="3.5" style="animation-delay:.8s"/><text x="508" y="306" class="mono" style="fill:#d96a98">σ = 0.10</text>
+        <path class="draw" d="M90,330 L500,135" fill="none" stroke="#b44a7d" stroke-width="3.5" style="animation-delay:.0s"/><text x="508" y="139" class="mono" style="fill:#b44a7d">σ = 0.75</text>
+        <g class="mono mut" text-anchor="middle"><text x="90" y="352">0</text><text x="295" y="352">correctness a</text><text x="500" y="352">1</text></g>
+        <g class="mono mut" text-anchor="end"><text x="80" y="335">0</text><text x="80" y="55">1</text></g>
+        <text transform="translate(34,190) rotate(-90)" text-anchor="middle" class="lab">unconditional silent-defect rate u</text>
+        <!-- side note -->
+        <g transform="translate(600,90)"><rect width="270" height="190" rx="10" fill="#fff7d6" stroke="#2b2d4a" stroke-width="2.5"/><rect x="20" y="-12" width="100" height="26" rx="13" fill="#2b2d4a"/><text x="70" y="6" text-anchor="middle" class="pix" style="fill:#fff;font-size:12px">SIDE NOTE</text>
+          <text x="16" y="46" class="lab">The same σ can hide very</text><text x="16" y="66" class="lab">different workloads: an agent</text><text x="16" y="86" class="lab">that is rarely correct has few</text><text x="16" y="106" class="lab">runs to be silent about.</text>
+          <text x="16" y="134" class="lab">So σ is always reported with</text><text x="16" y="154" class="lab">a and u, never alone.</text></g>
+      </svg></div>
+      <figcaption>An algebraic relationship, not data: for a fixed σ the unconditional rate rises linearly with correctness. No results are shown.</figcaption>
+    </figure>
+
+
+    <h4 class="t">Estimating the rate</h4>
+    <p>Cases, not runs, are the independent units, because repeated runs of a case share its records. Intervals come from a percentile cluster bootstrap that resamples whole units (10,000 replicates). The offline controls resample cases. The live written plan also specified cases, but because the 100 cases share only 14 companies I resampled companies instead, in line with clustering at the highest shared source group. This change was made after the data were seen, so it is <kbd>post hoc</kbd>.</p>
+    <!-- Figure 4: bootstrap schematic, analogous to paper_workflow_new.png -->
+    <figure class="fig"><div class="frame">
+      <svg viewBox="0 0 900 250" role="img" aria-label="Cluster bootstrap schematic">
+        <text x="14" y="26" class="pix">Whole units are resampled</text>
+        <g id="cases"></g>
+        <path d="M450,118 V150" stroke="#2b2d4a" stroke-width="2" marker-end="url(#ar2)"/>
+        <defs><marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 z" fill="#2b2d4a"/></marker></defs>
+        <text x="470" y="140" class="mono">resample whole cases with replacement</text>
+        <g id="resamp"></g>
+        <text x="450" y="238" text-anchor="middle" class="mono mut">each draw gives one σ*; the spread of σ* gives the interval</text>
+      </svg></div>
+      <figcaption>Cluster bootstrap (illustrative dots). Offline: cases. Live: the 14 companies that cases share.</figcaption>
+    </figure>
+
+    <p>With 14 units the bootstrap is coarse and degenerate when a rate has zero or one events, so I also report two exact upper bounds. Let <em>C</em> be the cases containing a correct run, <em>K</em> the runs per case, <em>N<sub>c</sub></em> the correct runs, and <em>p<sub>up</sub></em> the exact one-sided 95% binomial upper bound for the cases containing a silent run. For companies, <em>G</em> is the number with a correct run, <em>g<sub>up</sub></em> the exact bound for those containing a silent run, and <em>m</em> the most correct runs in any one company.</p>
+    <div class="eq">case-level: σ ≤ K · p<sub>up</sub> · C / N<sub>c</sub><br>company-level: σ ≤ g<sub>up</sub> · G · m / N<sub>c</sub><small>the case-level bound treats cases as independent; the company-level bound lets every correct run of an affected company be silent, so it is a conservative envelope, not an estimate</small></div>
+
+
+    <h4 class="t">Checking the process</h4>
+    <p>A deterministic checker applies the three rules above. Correctness comes from a separate answer oracle that does not contain these controls. I test the checker on 29 hand-built traces, whose expected labels were written separately from the checker but in the same session, and on eight edits to real live traces made after the data were seen (four planting a defect, four harmless, none changing the submitted value). These tests check the implementation against the stated rubric, not the rubric itself. An independent re-scoring from the raw logs also found four runs whose error was exactly 0.1 points scored incorrect by a floating-point comparison. I corrected this and report corrected counts; no defect count changed.</p>
+    <!-- Figure 2: checker validation, analogous to mle-solver.png -->
+    <figure class="fig"><div class="frame">
+      <svg viewBox="0 0 900 250" role="img" aria-label="Checker validation panels">
+        <g transform="translate(10,10)">
+          <rect width="280" height="230" rx="10" fill="#fff" stroke="#2b2d4a" stroke-width="2"/>
+          <text x="140" y="30" text-anchor="middle" class="pix">Planted defects</text>
+          <g class="lab"><rect x="24" y="52" width="232" height="30" rx="6" fill="#fff0f5" stroke="#d96a98"/><text x="40" y="72">drop a cited retrieval</text><text x="226" y="73" style="fill:#d96a98;font-size:18px;font-weight:700">⚑</text>
+          <rect x="24" y="92" width="232" height="30" rx="6" fill="#fff0f5" stroke="#d96a98"/><text x="40" y="112">cite restated basis</text><text x="226" y="113" style="fill:#d96a98;font-size:18px;font-weight:700">⚑</text>
+          <rect x="24" y="132" width="232" height="30" rx="6" fill="#fff0f5" stroke="#d96a98"/><text x="40" y="152">cite another company</text><text x="226" y="153" style="fill:#d96a98;font-size:18px;font-weight:700">⚑</text></g>
+          <text x="140" y="196" text-anchor="middle" class="mono">must be flagged</text>
+          <text x="140" y="216" text-anchor="middle" class="mono mut">matched expected flags</text>
+        </g>
+        <g transform="translate(310,10)">
+          <rect width="280" height="230" rx="10" fill="#fff" stroke="#2b2d4a" stroke-width="2"/>
+          <text x="140" y="30" text-anchor="middle" class="pix">Harmless reorderings</text>
+          <g class="lab"><rect x="24" y="52" width="232" height="30" rx="6" fill="#eefaf3" stroke="#4fb286"/><text x="40" y="72">reverse call order</text><text x="236" y="73" style="fill:#4fb286;font-size:18px;font-weight:700">✓</text>
+          <rect x="24" y="92" width="232" height="30" rx="6" fill="#eefaf3" stroke="#4fb286"/><text x="40" y="112">add profile lookup</text><text x="236" y="113" style="fill:#4fb286;font-size:18px;font-weight:700">✓</text>
+          <rect x="24" y="132" width="232" height="30" rx="6" fill="#eefaf3" stroke="#4fb286"/><text x="40" y="152">add a failed call</text><text x="236" y="153" style="fill:#4fb286;font-size:18px;font-weight:700">✓</text></g>
+          <text x="140" y="196" text-anchor="middle" class="mono">must not be flagged</text>
+          <text x="140" y="216" text-anchor="middle" class="mono mut">no disagreements</text>
+        </g>
+        <g transform="translate(610,10)">
+          <rect width="280" height="230" rx="10" fill="#fff" stroke="#2b2d4a" stroke-width="2"/>
+          <text x="140" y="30" text-anchor="middle" class="pix">Blind audit</text>
+          <g><circle cx="60" cy="90" r="22" fill="#f7a8c4" stroke="#2b2d4a" stroke-width="2"/><text x="60" y="95" text-anchor="middle" class="pix">H</text>
+          <circle cx="220" cy="90" r="22" fill="#fff" stroke="#2b2d4a" stroke-width="2"/><text x="220" y="95" text-anchor="middle" class="pix">Ck</text>
+          <path d="M84,90 H196" stroke="#2b2d4a" stroke-width="2" stroke-dasharray="5 4"/><text x="140" y="80" text-anchor="middle" class="mono">pending</text></g>
+          <text x="140" y="150" text-anchor="middle" class="mono">independent human labels</text>
+          <text x="140" y="216" text-anchor="middle" class="mono mut">not yet done</text>
+        </g>
+      </svg></div>
+      <figcaption>Checker validation. Edits to real traces are post hoc and use author-written expectations; the blind human audit of real traces has not been done.</figcaption>
+    </figure>
+
+    <div style="overflow-x:auto"><table class="tbl small "><tr><th></th><th>Hand-built traces</th><th>Edits to real live traces (post hoc)</th><th>Blind human audit</th></tr><tr><td>Deterministic checker</td><td>agrees with all 29</td><td>no disagreement with expected flags: 8,962 traces (1st repetition), 8,950 (2nd)</td><td>not yet done; 76 + 40 traces drawn, none labelled</td></tr></table></div>
+    <div style="height:34px"></div>
+
+
+    <h4 class="t">The live runs</h4>
+    <p>I ran one served model, <kbd>gpt-4o-mini</kbd>, at temperature 1.0 with at most twelve tool-calling turns. Six conditions were applied to the same 100 cases, each changing only the environment or the prompt so that answers, required evidence and the rubric stay identical. In <kbd>flaky</kbd> each data call fails with probability 0.25; in <kbd>pressure</kbd> the prompt asks for as few billed calls as possible; in <kbd>noisy</kbd> the question is buried in irrelevant business detail; in <kbd>distractor</kbd> an extra tool returns analyst estimates that are not filed figures. <kbd>combined</kbd> applies all four and <kbd>baseline</kbd> none. Each case ran twice per condition (1,200 runs), and the suite was run twice; the first repetition is primary and the second is reported separately, not pooled. The confirmatory hypothesis was that &sigma; in each non-baseline condition exceeds &sigma; at baseline. The written plan was not independently registered.</p>
+    <p>The <strong>task-length ladder</strong> repeats the idea on longer tasks with the same model and rubric: <kbd>short</kbd> (a single-year question, 2 required retrievals), <kbd>medium</kbd> (the average of four yearly margins, 8) and <kbd>long</kbd> (the average of eight, 16). It uses a regenerated world of 60 companies, 60 cases per tier and two runs per case under baseline, <kbd>flaky</kbd> and <kbd>combined</kbd> (1,080 runs), and its single confirmatory hypothesis was that &sigma; rises with task length. Each ladder case uses one company, so companies are the independent units.</p>
+
+
+    <h4 class="t">Results</h4>
+    <p><strong>Offline controls (scripted policies, not language-model findings).</strong> All 600 scripted runs were complete (three policies, 40 cases, five repetitions each). In stratum A the careful policy produced 100 correct runs and no silent defects, and the default-trap policy produced 100 correct runs, all silently defective. The mixed-error policy produced 95 correct runs, 62 of them silent (σ̂ = 65.3%, 95% CI 55.9&ndash;74.2). In stratum B the careful policy again had none, and the default-trap policy produced no correct run, so its rate is undefined, not zero. The mixed-error policy produced 41 correct runs, six silent (σ̂ = 14.6%, 2.5&ndash;29.0). The pooled rate for the mixed-error policy (50.0%, 39.1&ndash;59.6) depends on the chosen stratum mix. The checker agreed with all 29 hand-built traces and produced the expected flags on the edited live traces (8,962 and 8,950 in the two repetitions). The expectations were written by me, so this is not a blind human audit.</p>
+
+    <p><strong>Live evaluation of gpt-4o-mini.</strong> All 1,200 runs of the primary repetition were complete; in the second, one combined-condition run without a valid submission was excluded. At baseline, accuracy was 94.5% and no run broke the rubric, so σ̂ was 0 of 189 correct runs (0 of 190 in the second repetition). The baseline errors were all process-compliant revenue-growth questions, consistent with arithmetic error and not procedural failure.</p>
+    <figure class="fig"><div class="frame"><svg id="chLive" viewBox="0 0 900 360" role="img" aria-label="Live silent-defect rate by condition"></svg></div>
+      <figcaption>Primary repetition. Dot: σ̂ with company-bootstrap 95% interval. Diamond: case-level exact 95% upper bound. The company-level bound (31&ndash;49%) is off the axis.</figcaption></figure>
+    <div style="overflow-x:auto"><table class="tbl small "><tr><th>Condition</th><th>Accuracy (%)</th><th>Defective</th><th>Silent / correct</th><th>σ̂ (%)</th><th>Bound<sub>c</sub></th><th>Bound<sub>g</sub></th><th>Calls / run</th></tr><tr><td>baseline</td><td>94.5 (89.7&ndash;98.2)</td><td>0</td><td>0/189</td><td>0.0 (0.0&ndash;0.0)</td><td>3.1</td><td>31.4</td><td>3.03</td></tr><tr><td>flaky</td><td>94.5 (90.0&ndash;98.1)</td><td>0</td><td>0/189</td><td>0.0 (0.0&ndash;0.0)</td><td>3.1</td><td>31.4</td><td>4.41</td></tr><tr><td>pressure</td><td>95.0 (90.4&ndash;98.9)</td><td>0</td><td>0/190</td><td>0.0 (0.0&ndash;0.0)</td><td>3.1</td><td>31.2</td><td>3.00</td></tr><tr><td>noisy</td><td>93.5 (88.2&ndash;97.9)</td><td>0</td><td>0/187</td><td>0.0 (0.0&ndash;0.0)</td><td>3.2</td><td>31.7</td><td>3.00</td></tr><tr><td>distractor</td><td>95.0 (89.2&ndash;99.1)</td><td>0</td><td>0/190</td><td>0.0 (0.0&ndash;0.0)</td><td>3.1</td><td>31.2</td><td>3.01</td></tr><tr><td>combined</td><td>94.0 (90.2&ndash;97.4)</td><td>4</td><td>1/188</td><td>0.5 (0.0&ndash;1.6)</td><td>5.0</td><td>48.6</td><td>4.37</td></tr></table></div>
+    <p style="margin-top:14px;font-size:.88rem;color:var(--mute)">Primary repetition, 100 cases, two runs per case. Bound<sub>c</sub> and Bound<sub>g</sub> are the case-level and company-level 95% upper bounds on σ (percent). Bound<sub>g</sub> is a conservative envelope, not an estimate.</p>
+    <p>No single-setback condition produced a silent defect in either repetition, among 945 and 944 correct runs. The case-level bound was about 3%, but it treats the 100 cases as independent although they draw on 14 companies, and the company-level bound of 31&ndash;32% means the data cannot exclude much larger rates tied to a company-level mechanism. Failed calls alone did not degrade outcomes: under <kbd>flaky</kbd>, 19&ndash;20% of calls failed and calls per run rose from about 3.0 to 4.4, yet accuracy stayed near 94%. Silent defects occurred only in <kbd>combined</kbd>, once in each repetition (σ̂ = 0.5%; bounds 5.0% and 48.6&ndash;49.1%). Eight runs were defective in total, two of them silent. Every one fetched the tool&rsquo;s restated default after failed calls, and seven followed five or more failed calls. The two silent defects were in stratum A; the six loud ones were in stratum B and gave wrong answers. None of the five confirmatory contrasts was supported (Holm-adjusted p = 1.0 throughout).</p>
+    <div style="height:20px"></div>
+
+    <p><strong>Task length.</strong> At baseline there was no silent defect at any task length, including 0 of 113 correct runs at 16 retrievals, and none in any condition on short or medium tasks. With failing tools at 16 retrievals, 14 of 65 correct runs were silent under <kbd>flaky</kbd> (σ̂ = 21.5%, interval 12.0&ndash;31.9) and 5 of 51 under <kbd>combined</kbd> (9.8%, 2.6&ndash;18.2), while accuracy fell to 54.2% and 42.5%.</p>
+    <figure class="fig"><div class="frame"><svg id="chLad" viewBox="0 0 900 340" role="img" aria-label="Accuracy and silent-defect rate by task length"></svg></div>
+      <figcaption>Task-length ladder, gpt-4o-mini. Bars at 16 retrievals are 95% company-bootstrap intervals; zero cells have degenerate intervals.</figcaption></figure>
+    <div style="overflow-x:auto"><table class="tbl small "><tr><th>Tier</th><th>Condition</th><th>Calls</th><th>Acc. (%)</th><th>Silent / correct</th><th>σ̂ (%)</th><th>95% CI</th><th>Bound<sub>c</sub></th><th>Bound<sub>g</sub></th></tr><tr><td>short</td><td>baseline</td><td>3.0</td><td>93.3</td><td>0/112</td><td>0.0</td><td>0.0&ndash;0.0</td><td>5.2</td><td>20.6</td></tr><tr><td>short</td><td>flaky</td><td>4.5</td><td>93.3</td><td>0/111</td><td>0.0</td><td>0.0&ndash;0.0</td><td>5.3</td><td>20.8</td></tr><tr><td>short</td><td>combined</td><td>4.5</td><td>89.2</td><td>0/107</td><td>0.0</td><td>0.0&ndash;0.0</td><td>5.5</td><td>21.5</td></tr><tr><td>medium</td><td>baseline</td><td>11.3</td><td>91.7</td><td>0/110</td><td>0.0</td><td>0.0&ndash;0.0</td><td>5.3</td><td>20.9</td></tr><tr><td>medium</td><td>flaky</td><td>18.1</td><td>75.0</td><td>0/90</td><td>0.0</td><td>0.0&ndash;0.0</td><td>6.5</td><td>19.2</td></tr><tr><td>medium</td><td>combined</td><td>16.7</td><td>79.2</td><td>0/95</td><td>0.0</td><td>0.0&ndash;0.0</td><td>6.1</td><td>21.2</td></tr><tr><td>long</td><td>baseline</td><td>18.6</td><td>94.2</td><td>0/113</td><td>0.0</td><td>0.0&ndash;0.0</td><td>5.2</td><td>30.0</td></tr><tr><td>long</td><td>flaky</td><td>30.1</td><td>54.2</td><td>14/65</td><td>21.5</td><td>12.0&ndash;31.9</td><td>54.9</td><td>100.0</td></tr><tr><td>long</td><td>combined</td><td>28.9</td><td>42.5</td><td>5/51</td><td>9.8</td><td>2.6&ndash;18.2</td><td>38.5</td><td>90.0</td></tr></table></div>
+    <p style="margin-top:14px;font-size:.88rem;color:var(--mute)">60 cases per tier, two runs per case. This is a different world from the live suite above, so the two are not directly comparable.</p>
+    <p>The confirmatory contrasts supported the hypothesis for both failure conditions: the long-minus-short difference in σ was +21.5 points (11.5&ndash;32.1, Holm-adjusted p &lt; 0.001) for <kbd>flaky</kbd> and +9.8 (2.8&ndash;18.2, p = 0.009) for <kbd>combined</kbd>, and zero at baseline. The company-level bounds in these cells were 100% and 90%, so the data fix the direction of the effect more firmly than its size. The unconditional defect rate rises the same way, from 1 to 7 to 56 defective runs of about 120 under <kbd>flaky</kbd>, so the rise is not an artefact of conditioning on correctness.</p>
+    <p>In all 19 silent long-tier runs the model cited at least one required figure it never retrieved, every attempt to fetch it having returned an error; none fetched the figure on the restated basis instead. In a <kbd>post hoc</kbd> tabulation, runs with an unretrieved required figure were 0.8% of short runs, 5.8&ndash;7.5% of medium runs and 46.7&ndash;53.3% of long runs under the two failure conditions, so task length appears to act mainly by making unrecovered failures common. These runs probably stayed correct because one misestimated yearly margin is diluted in an eight-year average and falls inside the 0.1-point tolerance; I did not test this. A <kbd>post hoc</kbd> simulation suggests the company-resampling intervals are 6 to 9 points wide even when the true rate is 3%, so the design cannot separate a few percent from zero.</p>
+    <div style="height:20px"></div>
+
+    <h4 class="t">Discussion</h4>
+    <p>The scripted controls verify the construction of the benchmark: in stratum A the default-trap policy reached the right answer without retrieving the requested basis, while in stratum B the same choice changed the answer. They are not evidence about how often an independently developed agent would make that choice. They also show why the denominator matters, since a policy with no correct answers has no estimable σ even if every run breaks the rule.</p>
+    <p>The live results add a qualified observation. Tool failures, time pressure, a buried request or a distractor tool on their own produced no silent defect; defects appeared when a long task met failing tools, and then the model cited figures it had never retrieved. Two silent defects in 2,263 correct runs in the first suite make that a hypothesis for a larger study and not an estimate, and because the cases share only 14 companies, the absence of defects elsewhere should not be read as evidence of safety. The near-zero baseline rate has three readings the data cannot fully separate: the model may be reliable here, the checker may miss defects, or the task may be too easy. The ladder speaks to the third reading for one model; it does not address the checker or other models. Stratified samples of 76 traces from the first suite and 40 from the long tier have been drawn for a blind audit, but none has yet been labelled by an independent person.</p>
+    <p>Process failures among outcome-correct runs have been reported at much higher rates elsewhere, but a rate belongs to a model together with a rubric, benchmark and task. My rubric covers only three retrieval and citation rules, so a low rate here is expected even for an agent that would fail broader controls; I have not scored the same traces under a broader rubric and cannot say how much of the gap it explains.</p>
+
+
+    <h4 class="t">Limitations and future work</h4>
+    <p>The scripted policies stand in for a live model, so the offline validation does not measure language-model reliability. The live evaluation covers one small model, one synthetic world in which baseline accuracy was already high, six conditions of my choosing and two repetitions on the same 100 cases, which are not independent samples. The written plans were not independently registered, the sample sizes rested on a heuristic and not on simulation, and no random sample of live traces has been audited independently. The cases share only 14 companies, and the task involves no ledger writes or authorisation checks, so it cannot speak to the accounts-receivable controls that motivate the framework. The correctness tolerance may also let a misestimated figure pass in a long average.</p>
+    <p>The first next step is the blind human audit of real traces. After that, the live evaluation should be extended to several models and a harder world, with a protocol frozen and time-stamped before collection and case and repetition counts chosen by simulation. The proposed accounts-receivable extension would add payment records, invoice matching and ledger commitments, and would need its own outcome oracle and evidence-timing predicates. A pre-commit evidence gate, in the form of a verify-and-retry loop, may lower the silent-defect rate there, but this is a <kbd>conjecture</kbd> and not a result. It could be tested only where the baseline produces defects, such as the long tier with failing tools, and it should check requirements the scoring rubric does not rely on exclusively, since a gate that applies the same checks as the scorer would lower measured defects by construction. None of these extensions is measured here.</p>
+
+    <h4 class="t">Related Work</h4>
+    <p>Agent benchmarks such as <kbd>τ-bench</kbd> (Yao et al., 2024) check final states under policy guidelines. The closest work separates outcome from process in the same way: <kbd>CXBench</kbd> (Yu et al., 2026) reports that false passes, which pass the outcome check but fail the process check, are 80.07% of outcome passes in regulated customer-service tasks, and Cao et al. (2026) report that 27% to 78% of benchmark-reported successes in <kbd>τ-bench</kbd> are corrupt for three models. Uesato et al. (2022) report error among correct final answers falling from 14.0% to 3.4% for the best process-based results in mathematics, a conditional measurement close in form to σ. I apply the same conditional framing to observable tool calls and citations in a finance setting, with an explicit denominator and resampling at the level of shared source records. My rubric is narrower than theirs, so my rates should not be compared directly with theirs.</p>
+  </div></div>
+</section>
+
+<div class="container"><div class="heroart" style="max-width:640px"><svg id="hero" viewBox="0 0 900 330" role="img" aria-label="Decorative pink parametric curves"></svg></div></div>
+
+<section class="section" id="BibTeX">
+  <div class="container"><div class="col23" id="citation-ref">
+    <h2 class="bib">BibTeX</h2>
+<pre><code>@misc{sandhu2026silentdefects,
+  title  = {Silent Procedural Defects in Financial Tool Use: An Evaluation Framework, Offline Validation, and a Live Stress Test},
+  author = {Sandhu, Jasleen},
+  year   = {2026}
+}</code></pre>
+  </div></div>
+</section>
+
+<footer>
+  <div class="container">Page template borrowed from <a href="https://nerfies.github.io/">Nerfies</a> and the <a href="https://agentlaboratory.github.io/">Agent Laboratory</a> project page.</div>
+</footer>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+const el=(p,n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+
+/* hero: parametric curves from the GeoGebra references, drawn as pink line art + pixel hearts */
+(function(){
+  const s=document.getElementById('hero');
+  const path=(fx,fy,t0,t1,n,tx,sc)=>{let d='';for(let i=0;i<=n;i++){const t=t0+(t1-t0)*i/n;d+=(i?'L':'M')+(tx[0]+fx(t)*sc).toFixed(1)+','+(tx[1]-fy(t)*sc).toFixed(1)}return d};
+  // nested hearts
+  [1,.75,.5,.25].forEach((k,i)=>{
+    const hx=t=>16*k*Math.pow(Math.sin(t),3), hy=t=>k*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+    el(s,'path',{d:path(hx,hy,0,2*Math.PI,240,[450,150],8.2)+'Z',fill:i===3?'#f7a8c4':'none',stroke:'#d96a98','stroke-width':2.2,opacity:.95});
+  });
+  // butterfly curve, left and right
+  const bx=t=>Math.sin(t)*(Math.exp(Math.cos(t))-2*Math.cos(4*t)-Math.pow(Math.sin(t/12),5));
+  const by=t=>Math.cos(t)*(Math.exp(Math.cos(t))-2*Math.cos(4*t)-Math.pow(Math.sin(t/12),5));
+  [[150,150],[750,150]].forEach(c=>el(s,'path',{d:path(bx,by,0,12*Math.PI,1400,c,34),fill:'none',stroke:'#f08fb4','stroke-width':1.6}));
+  // pixel hearts / sparkles
+  const H=["01100110","11111111","11111111","11111111","01111110","00111100","00011000"];
+  const S=["0010100","0001000","1111111","0001000","0010100"];
+  const px=(g,x,y,z,c)=>g.forEach((r,j)=>[...r].forEach((v,i)=>v==='1'&&el(s,'rect',{x:x+i*z,y:y+j*z,width:z,height:z,fill:c,'shape-rendering':'crispEdges'})));
+  [[40,30,4],[300,20,3],[610,34,3],[840,40,5],[20,250,3],[860,240,3],[330,290,4],[560,280,3]].forEach(([x,y,z],i)=>px(i%2?S:H,x,y,z,'#fff'));
+})();
+
+/* figure 4: cases as columns of runs, then resampled columns (illustrative colours, no data) */
+(function(){
+  const g=document.getElementById('cases'),r=document.getElementById('resamp');
+  const cols=['#4fb286','#4fb286','#d96a98','#4fb286','#d96a98','#4fb286','#d96a98','#d96a98'];
+  const draw=(parent,y0,order)=>order.forEach((c,i)=>{
+    const x=120+i*88;
+    el(parent,'rect',{x,y:y0,width:60,height:60,rx:6,fill:'#fff',stroke:'#2b2d4a','stroke-width':2});
+    for(let k=0;k<3;k++)el(parent,'circle',{cx:x+16+k*14,cy:y0+30,r:5,fill:cols[(c+k)%cols.length]});
+    el(parent,'text',{x:x+30,y:y0+52,'text-anchor':'middle',class:'mono mut'}).textContent='case '+(c+1);
+  });
+  draw(g,48,[0,1,2,3,4,5,6,7]);
+  draw(r,158,[2,2,5,0,6,6,3,1]);
+})();
+
+/* pixel chibi agents (procedural, 16x24 grid) */
+const PAL={
+  agent:{hair:'#2b2638',skin:'#fde7d6',top:'#f7a8c4',long:1,bangs:'part'},
+  gen:{hair:'#6b4535',skin:'#fde7d6',top:'#f3ead8',long:0,curls:1,bangs:'part'},
+  gate:{hair:'#e4cf9a',skin:'#fde7d6',top:'#cfe6c9',long:1,bangs:'full',sprout:1},
+  checker:{hair:'#2b2638',skin:'#fde7d6',top:'#e9e9f0',long:1,bangs:'full',glasses:1},
+  oracle:{hair:'#241f2e',skin:'#fde7d6',top:'#3a3550',long:1,bangs:'part',bow:1},
+  stat:{hair:'#7a5240',skin:'#fde7d6',top:'#f3ead8',long:1,bangs:'full'}
+};
+function chibi(g){
+  const p=PAL[g.dataset.k],G={},set=(x,y,c)=>{G[x+','+y]=c};
+  const ell=(cx,cy,rx,ry,c)=>{for(let y=Math.floor(cy-ry);y<=Math.ceil(cy+ry);y++)for(let x=Math.floor(cx-rx);x<=Math.ceil(cx+rx);x++)if(((x-cx)/rx)**2+((y-cy)/ry)**2<=1)set(x,y,c)};
+  // body, arms, skirt, legs
+  for(let y=16;y<=19;y++)for(let x=5;x<=10;x++)set(x,y,p.top);
+  for(let y=16;y<=19;y++){set(4,y,p.top);set(11,y,p.top)}
+  set(4,20,p.skin);set(11,20,p.skin);
+  for(let x=4;x<=11;x++){set(x,19,p.top);set(x,20,p.top)}
+  set(4,20,p.skin);set(11,20,p.skin);
+  [6,9].forEach(x=>{set(x,21,'#fff');set(x,22,'#fff');set(x,23,'#4a3f55');set(x+1,23,'#4a3f55')});
+  if(p.bow){set(7,16,'#fff');set(8,16,'#fff');set(7,17,'#fff');set(8,17,'#fff')}
+  // hair back
+  ell(8,7.5,7,7.5,p.hair);
+  if(p.long)for(let y=10;y<=19;y++){for(let x=1;x<=3;x++)set(x,y,p.hair);for(let x=12;x<=14;x++)set(x,y,p.hair)}
+  if(p.curls)for(let y=12;y<=15;y++){for(let x=0;x<=3;x++)set(x,y,p.hair);for(let x=12;x<=15;x++)set(x,y,p.hair)}
+  // headphone band
+  for(let y=0;y<=9;y++)for(let x=0;x<=15;x++){const d=Math.hypot((x-8)/8.4,(y-8)/9.2);if(d>0.9&&d<=1.05&&y<=8)set(x,y,'#d4d4dc')}
+  // face
+  ell(8,10,5.5,4.8,p.skin);
+  // bangs
+  for(let y=1;y<=7;y++)for(let x=2;x<=13;x++){
+    const inH=((x-8)/7)**2+((y-7.5)/7.5)**2<=1;
+    const lim=p.bangs==='full'?7:6+((Math.abs(x-7.5)>3.5)?1:0);
+    if(inH&&y<=lim&&!(p.bangs==='part'&&y>=6&&(x===7||x===8)))set(x,y,p.hair);
+  }
+  // ear cups
+  for(let y=8;y<=11;y++){set(0,y,'#d4d4dc');set(1,y,'#c4c4ce');set(14,y,'#c4c4ce');set(15,y,'#d4d4dc')}
+  // eyes, blush, mouth
+  [5,10].forEach(x=>{set(x,10,'#2b2638');set(x,11,'#2b2638');set(x+1,10,'#fff')});
+  set(4,12,'#f4b0b8');set(11,12,'#f4b0b8');set(7,13,'#e08a98');set(8,13,'#e08a98');
+  if(p.glasses)for(let y=9;y<=12;y++)for(let x=3;x<=7;x++)if(x===3||x===7||y===9||y===12){set(x,y,'#7a6a8a');set(x+5,y,'#7a6a8a')}
+  if(p.sprout){set(8,-1,'#6fbf73');set(7,-2,'#6fbf73');set(9,-2,'#6fbf73');set(8,0,'#6fbf73')}
+  // outline
+  const O='#4a3f55',keys=Object.keys(G),add={};
+  keys.forEach(k=>{const[x,y]=k.split(',').map(Number);[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const n=(x+dx)+','+(y+dy);if(!G[n])add[n]=1})});
+  Object.keys(add).forEach(k=>G[k]=O);
+  Object.entries(G).forEach(([k,c])=>{const[x,y]=k.split(',').map(Number);el(g,'rect',{x,y,width:1.02,height:1.02,fill:c,'shape-rendering':'crispEdges'})});
+}
+document.querySelectorAll('g.chibi').forEach(chibi);
+
+/* ---- real-result charts (values copied from the paper's tables) ---- */
+function dotChart(id,o){
+  const svg=document.getElementById(id),W=900,rh=o.rh||44,top=46,left=o.left||190,pw=W-left-120,n=o.rows.length,H=top+n*rh+54;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);const X=v=>left+v/o.xmax*pw;
+  let s='<text x="'+W/2+'" y="24" text-anchor="middle" class="pix">'+o.title+'</text>';
+  o.ticks.forEach(t=>{s+='<path d="M'+X(t)+','+(top-6)+'V'+(top+n*rh)+'" stroke="#eadde3" stroke-width="1.5"/><text x="'+X(t)+'" y="'+(top+n*rh+20)+'" text-anchor="middle" class="mono mut">'+t+'</text>'});
+  s+='<path d="M'+left+','+(top-6)+'V'+(top+n*rh)+'H'+(left+pw)+'" fill="none" stroke="#2b2d4a" stroke-width="2.5"/><text x="'+(left+pw/2)+'" y="'+(H-8)+'" text-anchor="middle" class="lab">'+o.xlabel+'</text>';
+  o.rows.forEach((r,i)=>{
+    const y=top+i*rh+rh/2;
+    if(r.group){s+='<text x="'+(left-12)+'" y="'+(y+5)+'" text-anchor="end" class="pix" style="font-size:12px;fill:#d96a98">'+r.group+'</text>';return}
+    s+='<text x="'+(left-12)+'" y="'+(y+5)+'" text-anchor="end" class="lab">'+r.label+'</text>';
+    if(r.undef){s+='<text x="'+(X(o.xmax*0.04))+'" y="'+(y+5)+'" class="mono mut">undefined: no correct runs</text>';return}
+    if(r.hi>r.lo)s+='<path d="M'+X(r.lo)+','+y+'H'+X(r.hi)+'M'+X(r.lo)+','+(y-7)+'V'+(y+7)+'M'+X(r.hi)+','+(y-7)+'V'+(y+7)+'" stroke="'+r.c+'" stroke-width="3"/>';
+    if(r.bound!=null)s+='<path d="M'+X(r.bound)+','+(y-9)+' l8,9 l-8,9 l-8,-9z" fill="#fff" stroke="#2b2d4a" stroke-width="2"/>';
+    s+='<circle cx="'+X(r.v)+'" cy="'+y+'" r="7" fill="'+r.c+'" stroke="#2b2d4a" stroke-width="2"/>';
+    s+='<text x="'+(X(Math.max(r.hi,r.bound||0,r.v))+16)+'" y="'+(y+5)+'" class="mono">'+r.note+'</text>';
+  });
+  svg.innerHTML=s;
+}
+const PK='#d96a98',NV='#2b2d4a',GR='#4fb286';
+dotChart('chLive',{title:'gpt-4o-mini: silent-defect rate by condition',xmax:6,ticks:[0,1,2,3,4,5,6],xlabel:'σ̂ (%) and case-level upper bound (%)',left:150,rows:[
+ {label:'baseline',v:0,lo:0,hi:0,bound:3.1,c:GR,note:'0.0 · bound 3.1'},
+ {label:'flaky',v:0,lo:0,hi:0,bound:3.1,c:GR,note:'0.0 · bound 3.1'},
+ {label:'pressure',v:0,lo:0,hi:0,bound:3.1,c:GR,note:'0.0 · bound 3.1'},
+ {label:'noisy',v:0,lo:0,hi:0,bound:3.2,c:GR,note:'0.0 · bound 3.2'},
+ {label:'distractor',v:0,lo:0,hi:0,bound:3.1,c:GR,note:'0.0 · bound 3.1'},
+ {label:'combined',v:0.5,lo:0,hi:1.6,bound:5.0,c:PK,note:'0.5 [0.0, 1.6] · bound 5.0'}]});
+
+(function(){
+  const svg=document.getElementById('chLad'),T=['2','8','16'];
+  const S={baseline:{c:NV,acc:[93.3,91.7,94.2],sg:[0,0,0]},flaky:{c:PK,acc:[93.3,75.0,54.2],sg:[0,0,21.5]},combined:{c:GR,acc:[89.2,79.2,42.5],sg:[0,0,9.8]}};
+  const CI={flaky:[12.0,31.9],combined:[2.6,18.2]};
+  const panels=[{x0:70,title:'Accuracy (%)',key:'acc',max:100,ticks:[0,25,50,75,100]},{x0:500,title:'σ̂ (%) among correct runs',key:'sg',max:35,ticks:[0,10,20,30]}];
+  let s='';const pw=330,ph=210,top=50;
+  panels.forEach(p=>{
+    const X=i=>p.x0+30+i*(pw-60)/2,Y=v=>top+ph-v/p.max*ph;
+    s+='<text x="'+(p.x0+pw/2)+'" y="26" text-anchor="middle" class="pix">'+p.title+'</text>';
+    p.ticks.forEach(t=>{s+='<path d="M'+p.x0+','+Y(t)+'H'+(p.x0+pw)+'" stroke="#eadde3" stroke-width="1.5"/><text x="'+(p.x0-8)+'" y="'+(Y(t)+5)+'" text-anchor="end" class="mono mut">'+t+'</text>'});
+    s+='<path d="M'+p.x0+','+top+'V'+(top+ph)+'H'+(p.x0+pw)+'" fill="none" stroke="#2b2d4a" stroke-width="2.5"/>';
+    T.forEach((t,i)=>{s+='<text x="'+X(i)+'" y="'+(top+ph+22)+'" text-anchor="middle" class="mono mut">'+t+'</text>'});
+    s+='<text x="'+(p.x0+pw/2)+'" y="'+(top+ph+46)+'" text-anchor="middle" class="lab">required retrievals</text>';
+    Object.entries(S).forEach(([k,d],j)=>{
+      const pts=d[p.key].map((v,i)=>X(i)+','+Y(v)).join(' ');
+      s+='<polyline class="draw" style="animation-delay:'+(j*.4)+'s" points="'+pts+'" fill="none" stroke="'+d.c+'" stroke-width="3.5"/>';
+      if(p.key==='sg'&&CI[k])s+='<path d="M'+X(2)+','+Y(CI[k][0])+'V'+Y(CI[k][1])+'M'+(X(2)-6)+','+Y(CI[k][0])+'h12M'+(X(2)-6)+','+Y(CI[k][1])+'h12" stroke="'+d.c+'" stroke-width="2.5"/>';
+      d[p.key].forEach((v,i)=>{s+='<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="5.5" fill="'+d.c+'" stroke="#fff" stroke-width="2"/>'});
+    });
+  });
+  s+='<g class="mono" style="font-size:16px"><circle cx="330" cy="318" r="6" fill="'+NV+'"/><text x="342" y="323">baseline</text><circle cx="430" cy="318" r="6" fill="'+PK+'"/><text x="442" y="323">flaky</text><circle cx="510" cy="318" r="6" fill="'+GR+'"/><text x="522" y="323">combined</text></g>';
+  svg.innerHTML=s;
+})();
+</script>
+</body>
+</html>
+
