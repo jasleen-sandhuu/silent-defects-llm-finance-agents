@@ -1,0 +1,504 @@
+{
+ "conditions": [
+  "baseline",
+  "flaky",
+  "pressure",
+  "noisy",
+  "distractor",
+  "combined"
+ ],
+ "n_shared_cases": 100,
+ "n_cases_dropped": 0,
+ "raw": {
+  "baseline": {
+   "runs": 200,
+   "completed": 200,
+   "completion_rate": 1.0,
+   "mean_calls": 3.01,
+   "failed_call_share": 0.0,
+   "tokens_in": 180936,
+   "tokens_out": 31814,
+   "est_cost_usd": 0.0462288
+  },
+  "flaky": {
+   "runs": 200,
+   "completed": 200,
+   "completion_rate": 1.0,
+   "mean_calls": 4.43,
+   "failed_call_share": 0.19977426636568849,
+   "tokens_in": 333039,
+   "tokens_out": 48198,
+   "est_cost_usd": 0.07887464999999999
+  },
+  "pressure": {
+   "runs": 200,
+   "completed": 200,
+   "completion_rate": 1.0,
+   "mean_calls": 3.005,
+   "failed_call_share": 0.0016638935108153079,
+   "tokens_in": 191254,
+   "tokens_out": 31886,
+   "est_cost_usd": 0.0478197
+  },
+  "noisy": {
+   "runs": 200,
+   "completed": 200,
+   "completion_rate": 1.0,
+   "mean_calls": 3.03,
+   "failed_call_share": 0.0,
+   "tokens_in": 211370,
+   "tokens_out": 32081,
+   "est_cost_usd": 0.050954099999999995
+  },
+  "distractor": {
+   "runs": 200,
+   "completed": 200,
+   "completion_rate": 1.0,
+   "mean_calls": 3.0,
+   "failed_call_share": 0.0,
+   "tokens_in": 208590,
+   "tokens_out": 31713,
+   "est_cost_usd": 0.050316299999999994
+  },
+  "combined": {
+   "runs": 200,
+   "completed": 199,
+   "completion_rate": 0.995,
+   "mean_calls": 4.44,
+   "failed_call_share": 0.20157657657657657,
+   "tokens_in": 455871,
+   "tokens_out": 45054,
+   "est_cost_usd": 0.09541305
+  }
+ },
+ "subsets": {
+  "all": {
+   "n_cases": 100,
+   "rows": {
+    "baseline": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 189,
+     "n_silent": 0,
+     "accuracy": 0.945,
+     "accuracy_ci": [
+      0.9,
+      0.98
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": 0.5226615236258441,
+     "n_eff": 124.12476250791639,
+     "upper95_exact": 0.02384593152096659,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     }
+    },
+    "flaky": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 187,
+     "n_silent": 0,
+     "accuracy": 0.935,
+     "accuracy_ci": [
+      0.885,
+      0.975
+     ],
+     "defect_rate": 0.005,
+     "defect_ci": [
+      0.0,
+      0.015
+     ],
+     "rho_used": -4.3368086899420197e-16,
+     "n_eff": 187.0,
+     "upper95_exact": 0.015892321633036777,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     },
+     "delta": 0.0,
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "p_one_sided": 1.0,
+     "p_holm": 1.0
+    },
+    "pressure": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 188,
+     "n_silent": 0,
+     "accuracy": 0.94,
+     "accuracy_ci": [
+      0.895,
+      0.98
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": 0.6483126110124325,
+     "n_eff": 114.05603448275869,
+     "upper95_exact": 0.025923506506551175,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     },
+     "delta": 0.0,
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "p_one_sided": 1.0,
+     "p_holm": 1.0
+    },
+    "noisy": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 190,
+     "n_silent": 0,
+     "accuracy": 0.95,
+     "accuracy_ci": [
+      0.905,
+      0.985
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": 0.7913593256059013,
+     "n_eff": 106.06470588235292,
+     "upper95_exact": 0.027849240247041163,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     },
+     "delta": 0.0,
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "p_one_sided": 1.0,
+     "p_holm": 1.0
+    },
+    "distractor": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 188,
+     "n_silent": 0,
+     "accuracy": 0.94,
+     "accuracy_ci": [
+      0.89,
+      0.98
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": 0.8243123336291035,
+     "n_eff": 103.0525291828794,
+     "upper95_exact": 0.028651487535586884,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     },
+     "delta": 0.0,
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "p_one_sided": 1.0,
+     "p_holm": 1.0
+    },
+    "combined": {
+     "sigma": 0.005376344086021506,
+     "sigma_ci": [
+      0.0,
+      0.016574585635359115
+     ],
+     "n_correct": 186,
+     "n_silent": 1,
+     "accuracy": 0.9346733668341709,
+     "accuracy_ci": [
+      0.8894472361809045,
+      0.9748743718592965
+     ],
+     "defect_rate": 0.01507537688442211,
+     "defect_ci": [
+      0.0,
+      0.035
+     ],
+     "rho_used": -0.01538461538461406,
+     "n_eff": 186.0,
+     "upper95_exact": 0.025249397907861126,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "inconclusive"
+     },
+     "delta": 0.005372793134758828,
+     "delta_ci": [
+      0.0,
+      0.016574585635359115
+     ],
+     "p_one_sided": 0.36536346365363465,
+     "p_holm": 1.0
+    }
+   }
+  },
+  "A (basis irrelevant)": {
+   "n_cases": 50,
+   "rows": {
+    "baseline": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 97,
+     "n_silent": 0,
+     "accuracy": 0.97,
+     "accuracy_ci": [
+      0.93,
+      1.0
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": -0.020833333333333107,
+     "n_eff": 97.0,
+     "upper95_exact": 0.03041180403693111,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     }
+    },
+    "flaky": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 99,
+     "n_silent": 0,
+     "accuracy": 0.99,
+     "accuracy_ci": [
+      0.97,
+      1.0
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": -6.071532165918828e-16,
+     "n_eff": 99.0,
+     "upper95_exact": 0.02980667377335089,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     },
+     "delta": 0.0,
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "p_one_sided": 1.0,
+     "p_holm": 1.0
+    },
+    "pressure": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 98,
+     "n_silent": 0,
+     "accuracy": 0.98,
+     "accuracy_ci": [
+      0.95,
+      1.0
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": -0.010309278350515058,
+     "n_eff": 98.0,
+     "upper95_exact": 0.030106198694773156,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     },
+     "delta": 0.0,
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "p_one_sided": 1.0,
+     "p_holm": 1.0
+    },
+    "noisy": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 100,
+     "n_silent": 0,
+     "accuracy": 1.0,
+     "accuracy_ci": [
+      1.0,
+      1.0
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": 1.0,
+     "n_eff": 50.0,
+     "upper95_exact": 0.058155079116972264,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     },
+     "delta": 0.0,
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "p_one_sided": 1.0,
+     "p_holm": 1.0
+    },
+    "distractor": {
+     "sigma": 0.0,
+     "sigma_ci": [
+      0.0,
+      0.0
+     ],
+     "n_correct": 99,
+     "n_silent": 0,
+     "accuracy": 0.99,
+     "accuracy_ci": [
+      0.97,
+      1.0
+     ],
+     "defect_rate": 0.0,
+     "defect_ci": [
+      0.0,
+      0.0
+     ],
+     "rho_used": -7.806255641895639e-16,
+     "n_eff": 99.0,
+     "upper95_exact": 0.02980667377335089,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "not justified",
+      "100": "not justified"
+     },
+     "delta": 0.0,
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "p_one_sided": 1.0,
+     "p_holm": 1.0
+    },
+    "combined": {
+     "sigma": 0.01020408163265306,
+     "sigma_ci": [
+      0.0,
+      0.03125
+     ],
+     "n_correct": 98,
+     "n_silent": 1,
+     "accuracy": 0.98989898989899,
+     "accuracy_ci": [
+      0.9693877551020408,
+      1.0
+     ],
+     "defect_rate": 0.010101010101010102,
+     "defect_ci": [
+      0.0,
+      0.030612244897959183
+     ],
+     "rho_used": -0.010309278350515295,
+     "n_eff": 98.0,
+     "upper95_exact": 0.047491903920603484,
+     "verdicts": {
+      "2": "not justified",
+      "5": "not justified",
+      "10": "not justified",
+      "50": "inconclusive",
+      "100": "inconclusive"
+     },
+     "delta": 0.010322762579207126,
+     "delta_ci": [
+      0.0,
+      0.03125
+     ],
+     "p_one_sided": 0.36736326367363265,
+     "p_holm": 1.0
+    }
+   }
+  }
+ }
+}

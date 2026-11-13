@@ -1,0 +1,16 @@
+{
+ "args": {
+  "backend": "openai",
+  "model": "gpt-4o-mini",
+  "mock_profile": "careful",
+  "conditions": "baseline,flaky,pressure,noisy,distractor,combined",
+  "n_cases": 100,
+  "k": 2,
+  "temperature": 1.0,
+  "seed": 0,
+  "concurrency": 8,
+  "rerun_incomplete": false,
+  "out": "out_suite_run2"
+ },
+ "preregistration_sha256": "e44eed26143af847"
+}

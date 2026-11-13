@@ -1,0 +1,21 @@
+{
+ "args": {
+  "backend": "openai",
+  "model": "gpt-4o-mini",
+  "mock_profile": "careful",
+  "tiers": "short,medium,long",
+  "conditions": "baseline,flaky,combined",
+  "n_cases": 60,
+  "n_companies": 60,
+  "p_restate": 0.2,
+  "first_year": 2015,
+  "k": 2,
+  "temperature": 1.0,
+  "seed": 0,
+  "concurrency": 8,
+  "budget_usd": 10.0,
+  "rerun_incomplete": false,
+  "out": "out_ladder"
+ },
+ "preregistration_sha256": "9cf8122ad4dcef6e"
+}
